@@ -40,7 +40,7 @@ public class AnimTest : MonoBehaviour {
 		else
 		{
 			NextTarget = NextTarget.GetComponent<NextNode>().GetNextTargetObject ();
-			if (NextTarget.name == "NODE_1")
+			if (NextTarget == null)
 			{
 				Destroy(this.gameObject);
 			}
