@@ -1,10 +1,9 @@
 ﻿<Properties>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Resources\Scripts\NextNode.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\StuffDo.cs">
     <Files>
-      <File FileName="Assets\Resources\Scripts\AnimTest.cs" Line="15" Column="40" />
-      <File FileName="Assets\Resources\Scripts\StuffDo.cs" Line="43" Column="42" />
-      <File FileName="Assets\Resources\Scripts\NextNode.cs" Line="15" Column="3" />
+      <File FileName="Assets\Scripts\AnimTest.cs" Line="1" Column="1" />
+      <File FileName="Assets\Scripts\StuffDo.cs" Line="36" Column="3" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
