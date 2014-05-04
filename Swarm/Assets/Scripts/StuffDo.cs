@@ -1,7 +1,9 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class StuffDo : MonoBehaviour {
+public class StuffDo : MonoBehaviour 
+{
+	public Transform SwarmParent;
 
 	Transform T;
 	Camera C;
@@ -68,6 +70,8 @@ public class StuffDo : MonoBehaviour {
 			else
 			{
 				GameObject P = (GameObject)GameObject.Instantiate (walker, node1.transform.position, node1.transform.rotation);
+				//P.transform.parent = SwarmParent;
+
 				Vector3 NS = new Vector3(0.25f, 0.25f, T.position.z);
 				P.transform.localScale = NS;
 				_releaseCount -= 1;
