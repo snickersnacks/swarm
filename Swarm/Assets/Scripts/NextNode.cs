@@ -22,7 +22,6 @@ public class NextNode : MonoBehaviour {
 	}
 	void OnMouseUpAsButton()
 	{
-		Debug.Log ("CLICKED");
 		SwitchNextTarget ();
 	}
 }

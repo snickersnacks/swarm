@@ -19,7 +19,6 @@ public class StuffDo : MonoBehaviour {
 	{
 		Vector3 MouPos = Camera.main.ScreenToViewportPoint (Input.mousePosition);
 		Vector3 ThePos = this.transform.position;
-		Debug.Log (Input.mousePresent);
 		float NewSiz = C.orthographicSize;
 		if (MouPos.x > 0f && MouPos.x < 1f && MouPos.y > 0f && MouPos.y < 1f)
 		{
