@@ -18,3 +18,6 @@ Swarm/Swarm-csharp.sln
 Swarm/Swarm-csharp.sln
 Swarm/Swarm.sln
 Swarm/Swarm.userprefs
+*.csproj
+*.sln
+*.userprefs

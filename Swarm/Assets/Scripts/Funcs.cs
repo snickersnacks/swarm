@@ -12,7 +12,7 @@ namespace AssemblyCSharp
 			A.x = PointTwo.x - PointOne.x;
 			A.y = PointTwo.y - PointOne.y;
 			A.z = 0f;
-			Debug.Log ("P1:" + PointOne + "\r\nP2:" + PointTwo + "\r\nPR:" + A);
+			//Debug.Log ("P1:" + PointOne + "\r\nP2:" + PointTwo + "\r\nPR:" + A);
 			return A;
 		}
 	}

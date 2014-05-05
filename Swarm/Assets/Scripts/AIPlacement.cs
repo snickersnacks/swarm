@@ -5,6 +5,8 @@ public class AIPlacement : MonoBehaviour
 {
 	public static AIPlacement i;
 
+	public Transform Tower;
+
 	GameObject node1;
 
 	public Vector2 min;
@@ -25,19 +27,18 @@ public class AIPlacement : MonoBehaviour
 	{
 		if (Input.GetKeyUp(KeyCode.B))
 		{
-			StartCoroutine(DoThing(3));
+			StartCoroutine(DoThing());
 		}
 	}
 
-	public IEnumerator DoThing(float radius)
+	public IEnumerator DoThing()
 	{
-		GameObject go = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-		go.transform.localScale = radius * Vector3.one;
-		
-		yield return StartCoroutine(GetBestPosition(radius));
+		yield return StartCoroutine(GetBestPosition(Tower.GetComponent<TowerTargeting>().GetRadius()));
 		Vector2 best = imabest;
-
-		go.transform.position = new Vector3(best.x, best.y, 0);
+		
+		Transform tower = (Transform)GameObject.Instantiate(Tower);
+		//go.transform.localScale = radius * Vector3.one;
+		tower.transform.position = new Vector3(best.x, best.y, 0);
 	}
 
 	private Vector2 imabest;
@@ -45,16 +46,18 @@ public class AIPlacement : MonoBehaviour
 	{
 		Vector2 best = Vector2.zero;
 		float topdist = -1;
+		
+		GameObject go = new GameObject("yourmom");
+		CircleCollider2D collider = go.AddComponent<CircleCollider2D>();
+		collider.radius = radius;
+		collider.isTrigger = true;
+		go.layer = LayerMask.NameToLayer("PositioningAI");
 
 		for (float x = min.x; x < max.x; x+=step)
 		{
 			for (float y = min.y; y < max.y; y+=step)
 			{
-				GameObject go = new GameObject("yourmom");
 				go.transform.position = new Vector3(x, y, 0);
-				SphereCollider collider = go.AddComponent<SphereCollider>();
-				collider.radius = radius;
-				go.layer = LayerMask.NameToLayer("PositioningAI");
 
 				float totaldist = distsdists(node1, new Vector2(x, y), radius);
 
@@ -64,11 +67,17 @@ public class AIPlacement : MonoBehaviour
 					best = new Vector2(x, y);
 				}
 
-				yield return null;
+				go.name = totaldist.ToString();
+
+				//if (totaldist > 0)
+				//	Debug.Log("(" + x + ", " + y + "): " + totaldist);
+				//Debug.Break();
 			}
 
-			Debug.Log("completed: " + x);
+			yield return null;
 		}
+
+		Destroy(go);
 
 		Debug.Log("best pos: " + best + ". totaldist: " + topdist);
 		imabest = best;
@@ -83,7 +92,7 @@ public class AIPlacement : MonoBehaviour
 		{
 
 			dist += distsdists(nextGO, testpos, radius);
-			Debug.Log("FROM: " + OnNode.name + ". TO: " + nextGO.name + ". dist: " + dist);
+			//Debug.Log("(" + testpos + "): " + OnNode.name + " to " + nextGO.name + ". DIST: " + dist);
 
 		}
 
@@ -93,7 +102,7 @@ public class AIPlacement : MonoBehaviour
 	private float raydist(GameObject nodeGO, Vector2 testpos, float radius)
 	{
 		Vector2 originnodepos = new Vector2(nodeGO.transform.position.x, nodeGO.transform.position.y);
-		float dist = -1;
+		float dist = 0;
 
 		NextNode nextnode = nodeGO.GetComponent<NextNode>();
 
@@ -104,7 +113,10 @@ public class AIPlacement : MonoBehaviour
 			Vector2 nextpos = new Vector2(nextGO.transform.position.x, nextGO.transform.position.y);
 			
 			if (isPointInCircle(testpos, radius, originnodepos))
+			{
+				//Debug.Log(originnodepos + " is inside " + testpos + " (rad " + radius + ")");
 				startpos = originnodepos;
+			}
 			else
 			{
 				RaycastHit2D hit = Physics2D.Raycast(originnodepos, (nextpos - originnodepos).normalized, 
@@ -116,7 +128,7 @@ public class AIPlacement : MonoBehaviour
 			}
 
 			if (isPointInCircle(testpos, radius, nextpos))
-				endpos = originnodepos;
+				endpos = nextpos;
 			else
 			{
 				RaycastHit2D hit = Physics2D.Raycast(originnodepos, (originnodepos - nextpos).normalized, 
@@ -128,20 +140,17 @@ public class AIPlacement : MonoBehaviour
 			}
 
 			dist += Vector2.Distance(startpos, endpos);
+
+			//if (dist > 0)
+			//	Debug.Log("(" + testpos + "): " + nodeGO.name + " to " + nextGO.name + ". DIST: " + dist);
 		}
 
 		return dist;
-	}
-
-	private bool isInRectangle(Vector2 center, float radius, Vector2 tocheck)
-	{
-		return tocheck.x >= center.x - radius && tocheck.x <= center.x + radius && 
-			   tocheck.y >= center.y - radius && tocheck.y <= center.y + radius;
-	}    
+	}   
 
 	private bool isPointInCircle(Vector2 center, float radius, Vector2 tocheck)
 	{
-		if(isInRectangle(center, radius, tocheck))
+		if (isInRectangle(center, radius, tocheck))
 		{
 			double dx = center.x - tocheck.x;
 			double dy = center.y - tocheck.y;
@@ -153,4 +162,10 @@ public class AIPlacement : MonoBehaviour
 		}
 		return false;
 	}
+	
+	private bool isInRectangle(Vector2 center, float radius, Vector2 tocheck)
+	{
+		return tocheck.x >= center.x - radius && tocheck.x <= center.x + radius && 
+			tocheck.y >= center.y - radius && tocheck.y <= center.y + radius;
+	} 
 }

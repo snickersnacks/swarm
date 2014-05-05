@@ -18,6 +18,12 @@ public class NextNode : MonoBehaviour {
 			LookAt();
 	}
 
+	void Update()
+	{
+		if (Input.GetKeyUp(KeyCode.N))
+			this.renderer.enabled = !this.renderer.enabled;
+	}
+
 	private void LookAt()
 	{
 		if (NODES.Count == 0)

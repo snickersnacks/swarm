@@ -56,4 +56,9 @@ public class TowerTargeting : MonoBehaviour {
 			FacingTarget = false;
 		}
 	}
+
+	public float GetRadius()
+	{
+		return this.GetComponent<CircleCollider2D>().radius;
+	}
 }
