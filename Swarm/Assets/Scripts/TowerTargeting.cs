@@ -1,7 +1,9 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class TowerTargeting : MonoBehaviour {
+public class TowerTargeting : MonoBehaviour 
+{
+	public Transform ActualTower;
 	
 	Transform _me;
 	Collider2D _target = null;
@@ -57,8 +59,21 @@ public class TowerTargeting : MonoBehaviour {
 		}
 	}
 
-	public float GetRadius()
+	public float GetRange()
 	{
 		return this.GetComponent<CircleCollider2D>().radius;
+	}
+
+	public float GetTowerRadius()
+	{
+		Collider2D col = ActualTower.GetComponent<Collider2D>();
+
+		if (col is CircleCollider2D)
+			return ((CircleCollider2D)col).radius * ActualTower.localScale.x;
+		else if (col is BoxCollider2D)
+			return ((BoxCollider2D)col).size.x * ActualTower.localScale.x;
+
+		Debug.Log("Error: ActualTower collider of odd type.");
+		return 1;
 	}
 }
