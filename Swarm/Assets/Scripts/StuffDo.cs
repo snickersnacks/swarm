@@ -22,15 +22,15 @@ public class StuffDo : MonoBehaviour {
 		float NewSiz = C.orthographicSize;
 		if (MouPos.x > 0f && MouPos.x < 1f && MouPos.y > 0f && MouPos.y < 1f)
 		{
-			if (MouPos.x >= 0.9f) { ThePos.x += MoveSpeed; }
-			else if (MouPos.x <= 0.1f) { ThePos.x -= MoveSpeed; }
-			else if (MouPos.x >= 0.8f) { ThePos.x += MoveSpeed * 0.5f; }
-			else if (MouPos.x <= 0.2f) { ThePos.x -= MoveSpeed * 0.5f; }
+			if (MouPos.x >= 0.99f) { ThePos.x += MoveSpeed; }
+			else if (MouPos.x <= 0.01f) { ThePos.x -= MoveSpeed; }
+			else if (MouPos.x >= 0.975f) { ThePos.x += MoveSpeed * 0.5f; }
+			else if (MouPos.x <= 0.025f) { ThePos.x -= MoveSpeed * 0.5f; }
 			
-			if (MouPos.y >= 0.9f) { ThePos.y += MoveSpeed; }
-			else if (MouPos.y <= 0.1f) { ThePos.y -= MoveSpeed; }
-			else if (MouPos.y >= 0.8f) { ThePos.y += MoveSpeed * 0.5f; }
-			else if (MouPos.y <= 0.2f) { ThePos.y -= MoveSpeed * 0.5f; }
+			if (MouPos.y >= 0.99f) { ThePos.y += MoveSpeed; }
+			else if (MouPos.y <= 0.01f) { ThePos.y -= MoveSpeed; }
+			else if (MouPos.y >= 0.975f) { ThePos.y += MoveSpeed * 0.5f; }
+			else if (MouPos.y <= 0.025f) { ThePos.y -= MoveSpeed * 0.5f; }
 		}
 		
 		if (Input.GetKey (KeyCode.UpArrow)) { ThePos.y += MoveSpeed; }

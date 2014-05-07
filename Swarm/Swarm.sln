@@ -3,6 +3,8 @@ Microsoft Visual Studio Solution File, Format Version 11.00
 
 Project("{A36769B5-822C-7059-DE05-AD2426BBF452}") = "Swarm", "Assembly-CSharp.csproj", "{DFC2D637-DE87-FA37-8361-AEFCE64E221A}"
 EndProject
+Project("{A36769B5-822C-7059-DE05-AD2426BBF452}") = "Swarm", "Assembly-CSharp-Editor.csproj", "{05C87624-A7E2-AC7F-AE87-99CCF8E1CC31}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -13,11 +15,15 @@ Global
 		{DFC2D637-DE87-FA37-8361-AEFCE64E221A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DFC2D637-DE87-FA37-8361-AEFCE64E221A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DFC2D637-DE87-FA37-8361-AEFCE64E221A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{05C87624-A7E2-AC7F-AE87-99CCF8E1CC31}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{05C87624-A7E2-AC7F-AE87-99CCF8E1CC31}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{05C87624-A7E2-AC7F-AE87-99CCF8E1CC31}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{05C87624-A7E2-AC7F-AE87-99CCF8E1CC31}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
-																												GlobalSection(MonoDevelopProperties) = preSolution
+																																			GlobalSection(MonoDevelopProperties) = preSolution
 																GlobalSection(MonoDevelopProperties) = preSolution
 																	GlobalSection(MonoDevelopProperties) = preSolution
 												GlobalSection(MonoDevelopProperties) = preSolution
