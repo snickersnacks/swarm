@@ -18,6 +18,8 @@ public class AIPlacement : MonoBehaviour
 	
 	public Dictionary<Vector2, float> positions;
 
+	public Shader yourmom;
+
 	void Awake()
 	{
 		i = this;
@@ -51,14 +53,8 @@ public class AIPlacement : MonoBehaviour
 	public IEnumerator GetBestPosition(float rangeRadius, float towerRadius)
 	{
 		positions = new Dictionary<Vector2, float>();
-		
-		GameObject rangeGO = new GameObject("rangeChecker");
-		CircleCollider2D rangeCollider = rangeGO.AddComponent<CircleCollider2D>();
-		rangeCollider.radius = rangeRadius;
-		rangeCollider.isTrigger = true;
-		rangeGO.layer = LayerMask.NameToLayer("PositioningAIRange");
 
-		GameObject towerGO = new GameObject("rangeChecker");
+		GameObject towerGO = new GameObject("towerChecker");
 		BoxCollider2D towerCollider = towerGO.AddComponent<BoxCollider2D>();
 		towerCollider.size = Vector2.one * towerRadius;
 		towerCollider.isTrigger = true;
@@ -70,19 +66,34 @@ public class AIPlacement : MonoBehaviour
 		{
 			for (float y = min.y; y < max.y; y+=step)
 			{
+				GameObject rangeGO = GameObject.CreatePrimitive(PrimitiveType.Cube);
+				DestroyImmediate(rangeGO.GetComponent<Collider>());
+				CircleCollider2D rangeCollider = rangeGO.AddComponent<CircleCollider2D>();
+				rangeCollider.radius = rangeRadius;
+				rangeCollider.isTrigger = true;
+				rangeGO.layer = LayerMask.NameToLayer("PositioningAIRange");
+
 				Vector2 currentpos = new Vector2(x, y);
 				rangeGO.transform.position = new Vector3(x, y, 0);
+				towerGO.transform.position = rangeGO.transform.position;
 
 				float totaldist = distsdists(node1, currentpos, rangeRadius, towerRadius);
 
-				if (totaldist != -1)
+				if (totaldist > 0)
+				{
 					positions.Add(currentpos, totaldist);
+					rangeGO.name = totaldist.ToString();
+					rangeGO.renderer.material.shader = yourmom;
+					rangeGO.renderer.material.color = new Color(totaldist / 30f, 0, 0, 0.85f);
+				}
+				else
+					Destroy(rangeGO);
 			}
 
 			yield return null;
 		}
 		
-		Destroy(rangeGO);
+		//Destroy(rangeGO);
 		Destroy(towerGO);
 	}
 
