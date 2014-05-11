@@ -1,0 +1,8 @@
+fileFormatVersion: 2
+guid: 4bcac8ef8df283048aecb78dfdb98130
+ShaderImporter:
+  defaultTextures:
+  - _MainTex: {instanceID: 0}
+  - _NormalsTex: {instanceID: 0}
+  - _CelRamp: {fileID: 2800000, guid: 2ea8f2a4928fe7a45b28e4273f5b061b, type: 3}
+  userData: 

@@ -7,7 +7,7 @@ public class StuffDo : MonoBehaviour {
 	Camera C;
 	public float ZoomSpeed = 0.25f;
 	public float MoveSpeed = 0.25f;
-	int _releaseCount = 60;
+	int _releaseCount = 0;
 	int _releaseTime = 5;
 	public int ReleaseTotal = 60;
 	void Start()
@@ -19,6 +19,7 @@ public class StuffDo : MonoBehaviour {
 	{
 		Vector3 MouPos = Camera.main.ScreenToViewportPoint (Input.mousePosition);
 		Vector3 ThePos = this.transform.position;
+		
 		float NewSiz = C.orthographicSize;
 		if (MouPos.x > 0f && MouPos.x < 1f && MouPos.y > 0f && MouPos.y < 1f)
 		{
@@ -53,8 +54,9 @@ public class StuffDo : MonoBehaviour {
 			{
 				GameObject G = GameObject.Find ("NODE_1");
 				GameObject P = (GameObject)GameObject.Instantiate (Resources.Load ("Prefabs/Armor Walking"), G.transform.position, G.transform.rotation);
-				Vector3 NS = new Vector3(0.25f, 0.25f, T.position.z);
+				Vector3 NS = new Vector3(0.25f, 0.25f, 0f);
 				P.transform.localScale = NS;
+				
 				_releaseCount -= 1;
 				_releaseTime = 15;
 			}
