@@ -1,0 +1,130 @@
+fileFormatVersion: 2
+guid: 26186ffeebd9dcd4280a6f65ca1112b0
+TextureImporter:
+  serializedVersion: 2
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    linearTexture: 0
+    correctGamma: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: .25
+    normalMapFilter: 0
+  isReadable: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 0
+  seamlessCubemap: 0
+  textureFormat: -1
+  maxTextureSize: 1024
+  textureSettings:
+    filterMode: -1
+    aniso: 1
+    mipBias: -1
+    wrapMode: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: .5, y: .5}
+  spritePixelsToUnits: 100
+  alphaIsTransparency: 1
+  textureType: 8
+  buildTargetSettings:
+  - buildTarget: iPhone
+    maxTextureSize: 1024
+    textureFormat: -2
+    compressionQuality: 50
+  spriteSheet:
+    sprites:
+    - name: Bull_1
+      rect:
+        serializedVersion: 2
+        x: 52
+        y: 1009
+        width: 346
+        height: 542
+      alignment: 9
+      pivot: {x: .480707914, y: .32758221}
+    - name: Bull_2
+      rect:
+        serializedVersion: 2
+        x: 438
+        y: 968
+        width: 462
+        height: 614
+      alignment: 9
+      pivot: {x: .427759469, y: .391286254}
+    - name: Bull_3
+      rect:
+        serializedVersion: 2
+        x: 1102
+        y: 968
+        width: 470
+        height: 620
+      alignment: 9
+      pivot: {x: .571010888, y: .419253647}
+    - name: Bull_5
+      rect:
+        serializedVersion: 2
+        x: 542
+        y: 697
+        width: 372
+        height: 262
+      alignment: 9
+      pivot: {x: .311591685, y: .474522948}
+    - name: Bull_7
+      rect:
+        serializedVersion: 2
+        x: 504
+        y: 406
+        width: 857
+        height: 282
+      alignment: 0
+      pivot: {x: .5, y: .5}
+    - name: Bull_8
+      rect:
+        serializedVersion: 2
+        x: 7
+        y: 15
+        width: 343
+        height: 623
+      alignment: 9
+      pivot: {x: .480539292, y: .901788056}
+    - name: Bull_21
+      rect:
+        serializedVersion: 2
+        x: 373
+        y: 3
+        width: 522
+        height: 389
+      alignment: 9
+      pivot: {x: .896410227, y: .765971899}
+    - name: Bull_23
+      rect:
+        serializedVersion: 2
+        x: 1004
+        y: 0
+        width: 528
+        height: 371
+      alignment: 9
+      pivot: {x: .108094648, y: .778876483}
+    - name: Bull_24
+      rect:
+        serializedVersion: 2
+        x: 68
+        y: 696
+        width: 367
+        height: 269
+      alignment: 9
+      pivot: {x: .69097507, y: .487593293}
+  spritePackingTag: 
+  userData: 
