@@ -4,9 +4,9 @@ using AssemblyCSharp;
 public class Bullet : MonoBehaviour {
 
 	Vector3 currentTarget;
-	float speed = 0.25f;
+	public float speed = 0.25f;
 	bool GoGo = false;
-	int LivesFor = 1500;
+	public int LivesFor = 1500;
 	Vector3 Line;
 	void Start () {
 	
@@ -38,6 +38,8 @@ public class Bullet : MonoBehaviour {
 	{
 		if (Col.name != "Tower")
 		{
+			Col.GetComponent<AnimTest>().HealthPoints -= 1;
+			//Debug.Log (Col.GetComponent<AnimTest>().HealthPoints + " Health Left...");
 			Destroy (this.gameObject);
 		}
 	}

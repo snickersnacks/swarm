@@ -22,13 +22,17 @@ public class TowerTargeting : MonoBehaviour
 	{
 		if (_target != null)
 		{
+			//Debug.Log ("T Health: " + _target.GetComponent <AnimTest>().HealthPoints);
 			if (FacingTarget)
 			{
-				this.transform.rotation = Quaternion.LookRotation(Vector3.forward, _target.transform.position - this.transform.position);
+				this.transform.rotation = Quaternion.LookRotation(Vector3.forward, _target.transform.position + Vector3.forward - this.transform.position);
 				if (FireCount <= 0)
 				{
+					Vector3 OffSetTargeting = Vector3.zero;
+					OffSetTargeting.y = Random.Range (-0.3f, 0.3f);
+					OffSetTargeting.x = Random.Range (-0.3f, 0.3f);
 					GameObject P = (GameObject)GameObject.Instantiate (Resources.Load ("Prefabs/Bullet"), _me.position, _me.rotation);
-					P.GetComponent<Bullet>().GoGoGo (_target.transform.position);
+					P.GetComponent<Bullet>().GoGoGo (_target.transform.position + OffSetTargeting);
 					FireCount = FireSpeed;
 				}
 				else { FireCount -= 1; }
@@ -38,9 +42,13 @@ public class TowerTargeting : MonoBehaviour
 				
 			}
 		}
+		else
+		{
+			HasTarget = false;
+		}
 	}
 	
-	void OnTriggerEnter2D(Collider2D Col)
+	void OnTriggerStay2D(Collider2D Col)
 	{
 		if (!HasTarget)
 		{
