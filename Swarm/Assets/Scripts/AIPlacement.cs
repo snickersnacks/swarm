@@ -18,7 +18,7 @@ public class AIPlacement : MonoBehaviour
 	
 	public Dictionary<Vector2, float> positions;
 
-	public Shader yourmom;
+	public Shader MapGradient;
 
 	void Awake()
 	{
@@ -83,8 +83,8 @@ public class AIPlacement : MonoBehaviour
 				{
 					positions.Add(currentpos, totaldist);
 					rangeGO.name = totaldist.ToString();
-					rangeGO.renderer.material.shader = yourmom;
-					rangeGO.renderer.material.color = new Color(totaldist / 30f, 0, 0, 0.85f);
+					rangeGO.renderer.material.shader = MapGradient;
+					rangeGO.renderer.material.color = new Color(totaldist / 20f, 0, 0, 0.7f);
 				}
 				else
 					Destroy(rangeGO);
