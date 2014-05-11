@@ -10,25 +10,58 @@ public class AIPlacement : MonoBehaviour
 
 	public Transform Tower;
 
-	GameObject node1;
+	public GameObject[] startingNodes;
 
 	public Vector2 min;
 	public Vector2 max;
 	public float step;
-	
-	public Dictionary<Vector2, float> positions;
 
-	public Shader yourmom;
+	public Shader HeatMapShader;
 
+	private int towerlayer;
+	private int rangelayer;
+
+    private List<LineSegment> linesegments = new List<LineSegment>();
+    private List<PotentialTower> potentialTowers = new List<PotentialTower>();
 	void Awake()
 	{
 		i = this;
+		towerlayer = LayerMask.NameToLayer("PositioningAITower");
+		rangelayer = LayerMask.NameToLayer("PositioningAIRange");
 	}
+
 
 	void Start() 
 	{
-		node1 = GameObject.Find("NODE_1");
+		foreach (GameObject startingnode in startingNodes)
+		{
+			GetSegments(startingnode);
+		}
+
+        foreach (LineSegment segment in linesegments)
+        {
+            GameObject line = new GameObject(segment.StartNodeGO.name + " to " + segment.EndNodeGO.name);
+            LineRenderer lr = line.AddComponent<LineRenderer>();
+            lr.SetWidth(0.05f, 0.05f);
+            lr.SetPosition(0, new Vector3(segment.StartPos.x, segment.StartPos.y, -1));
+            lr.SetPosition(1, new Vector3(segment.EndPos.x, segment.EndPos.y, -1));
+        }
 	}
+
+	private void GetSegments(GameObject fromnode)
+	{
+		NextNode nodeScript = fromnode.GetComponent<NextNode>();
+
+		foreach (GameObject tonode in nodeScript.NODES)
+		{
+            LineSegment segment = new LineSegment(fromnode, tonode);
+            if (linesegments.Contains(segment) == false)
+                linesegments.Add(segment);
+
+            GetSegments(tonode);
+		}
+	}
+
 
 	void Update()
 	{
@@ -43,7 +76,7 @@ public class AIPlacement : MonoBehaviour
 		TowerTargeting towertargeting = Tower.GetComponent<TowerTargeting>();
 		yield return StartCoroutine(GetBestPosition(towertargeting.GetRange(), towertargeting.GetTowerRadius()));
 
-		Vector2 best = positions.OrderByDescending(p => p.Value).First().Key;
+        Vector2 best = potentialTowers.OrderByDescending(pTower => pTower.TotalDistance).First().Location;
 		
 		Transform tower = (Transform)GameObject.Instantiate(Tower);
 		//go.transform.localScale = radius * Vector3.one;
@@ -52,15 +85,11 @@ public class AIPlacement : MonoBehaviour
 
 	public IEnumerator GetBestPosition(float rangeRadius, float towerRadius)
 	{
-		positions = new Dictionary<Vector2, float>();
-
 		GameObject towerGO = new GameObject("towerChecker");
 		BoxCollider2D towerCollider = towerGO.AddComponent<BoxCollider2D>();
 		towerCollider.size = Vector2.one * towerRadius;
 		towerCollider.isTrigger = true;
-		towerGO.layer = LayerMask.NameToLayer("PositioningAITower");
-
-		Debug.Log("size: " + towerRadius);
+		towerGO.layer = towerlayer;
 
 		for (float x = min.x; x < max.x; x+=step)
 		{
@@ -71,111 +100,105 @@ public class AIPlacement : MonoBehaviour
 				CircleCollider2D rangeCollider = rangeGO.AddComponent<CircleCollider2D>();
 				rangeCollider.radius = rangeRadius;
 				rangeCollider.isTrigger = true;
-				rangeGO.layer = LayerMask.NameToLayer("PositioningAIRange");
+				rangeGO.layer = rangelayer;
 
 				Vector2 currentpos = new Vector2(x, y);
 				rangeGO.transform.position = new Vector3(x, y, 0);
 				towerGO.transform.position = rangeGO.transform.position;
 
-				float totaldist = distsdists(node1, currentpos, rangeRadius, towerRadius);
+				PotentialTower potentialTower = rangeGO.AddComponent<PotentialTower>();
+                
+                distsdists(potentialTower, currentpos, rangeRadius, towerRadius);
 
-				if (totaldist > 0)
+                if (potentialTower.TotalDistance > 0)
 				{
-					positions.Add(currentpos, totaldist);
-					rangeGO.name = totaldist.ToString();
-					rangeGO.renderer.material.shader = yourmom;
-					rangeGO.renderer.material.color = new Color(totaldist / 30f, 0, 0, 0.85f);
+                    potentialTowers.Add(potentialTower);
+
+                    rangeGO.name = potentialTower.TotalDistance.ToString();
+					rangeGO.renderer.material.shader = HeatMapShader;
+                    rangeGO.renderer.material.color = new Color(potentialTower.TotalDistance / 30f, 0, 0, 0.85f);
 				}
 				else
-					Destroy(rangeGO);
+                {
+                    rangeGO.name = "death";
+					rangeGO.renderer.material.shader = HeatMapShader;
+                    if (potentialTower.TotalDistance == (int)AIPLACEMENTERRORS.NodeTouchingTower)
+                        rangeGO.renderer.material.color = Color.yellow; // no segments touching range
+                    else if (potentialTower.TotalDistance == (int)AIPLACEMENTERRORS.PathOutsideRange)
+                        rangeGO.renderer.material.color = Color.blue; // tower inside node
+                    else if (potentialTower.TotalDistance == (int)AIPLACEMENTERRORS.TowerInPath)
+                        rangeGO.renderer.material.color = Color.green; // tower in path
+                    else if (potentialTower.TotalDistance == 0)
+                    {
+                        Debug.Log("This really shouldn't happen. The potential tower is touching the path, but... no... amount of distance on the path.");
+                        rangeGO.renderer.material.color = Color.cyan; // no... distance?
+                    }
+
+                }
+
+                Destroy(rangeCollider);
 			}
 
 			yield return null;
 		}
 		
-		//Destroy(rangeGO);
 		Destroy(towerGO);
 	}
 
-	private float distsdists(GameObject OnNode, Vector2 testpos, float rangeRadius, float towerRadius)
+    private void distsdists(PotentialTower potentialtower, Vector2 testpos, float rangeRadius, float towerRadius)
 	{
-		float totaldist = raydist(OnNode, testpos, rangeRadius, towerRadius);
-		NextNode nextnode = OnNode.GetComponent<NextNode>();
+        potentialtower.Location = testpos;
 
-		foreach (GameObject nextGO in nextnode.NODES)
+		foreach (LineSegment segment in linesegments)
 		{
-			float dist = distsdists(nextGO, testpos, rangeRadius, towerRadius);
+            Vector2 startIntersection = Vector2.one;
+            Vector2 endIntersection = Vector2.one;
 
-			if (dist == -1)
-				return -1;
-			else
-				totaldist += dist;
-		}
-
-		return totaldist;
-	}
-
-	private float raydist(GameObject nodeGO, Vector2 testpos, float rangeRadius, float towerRadius)
-	{
-		Vector2 originnodepos = new Vector2(nodeGO.transform.position.x, nodeGO.transform.position.y);
-		float dist = 0;
-
-		NextNode nextnode = nodeGO.GetComponent<NextNode>();
-
-		foreach (GameObject nextGO in nextnode.NODES)
-		{
-			Vector2 startpos = Vector2.zero;
-			Vector2 endpos = Vector2.zero;
-			Vector2 nextpos = new Vector2(nextGO.transform.position.x, nextGO.transform.position.y);
-
-			if (isPointInCircle(testpos, towerRadius, originnodepos) || isPointInCircle(testpos, towerRadius, nextpos))
+			if (isPointInCircle(testpos, towerRadius, segment.StartPos) || isPointInCircle(testpos, towerRadius, segment.EndPos))
 			{
-				//Debug.Log("node inside tower");
-				return -1; //node is inside tower
+                potentialtower.TotalDistance = (int)AIPLACEMENTERRORS.NodeTouchingTower; // node inside tower
+                return;
 			}
 
-			RaycastHit2D towerhit = Physics2D.Raycast(originnodepos, (nextpos - originnodepos).normalized, 
-			                                          Vector2.Distance(originnodepos, nextpos), 1 << LayerMask.NameToLayer("PositioningAITower"));
+			RaycastHit2D towerhit = Physics2D.Raycast(segment.StartPos, (segment.EndPos - segment.StartPos).normalized, 
+			                                          Vector2.Distance(segment.StartPos, segment.EndPos), 1 << towerlayer);
 			if (towerhit.collider != null)
-			{
-				//Debug.Log("tower on path");
-				return -1; //tower is on the path
+            {
+                potentialtower.TotalDistance = (int)AIPLACEMENTERRORS.TowerInPath; // tower on path
+                return;
 			}
 			
-			if (isPointInCircle(testpos, rangeRadius, originnodepos))
+			if (isPointInCircle(testpos, rangeRadius, segment.StartPos))
 			{
 				//Debug.Log(originnodepos + " is inside " + testpos + " (rad " + radius + ")");
-				startpos = originnodepos;
+                startIntersection = segment.StartPos;
 			}
 			else
 			{
-				RaycastHit2D hit = Physics2D.Raycast(originnodepos, (nextpos - originnodepos).normalized, 
-				                                     Vector2.Distance(originnodepos, nextpos), 1 << LayerMask.NameToLayer("PositioningAIRange"));
+                RaycastHit2D hit = Physics2D.Raycast(segment.StartPos, (segment.EndPos - segment.StartPos).normalized,
+                                                     Vector2.Distance(segment.StartPos, segment.EndPos), 1 << rangelayer);
 				if (hit.collider != null)
-					startpos = hit.point;
+                    startIntersection = hit.point;
 				else
 					continue;
 			}
 
-			if (isPointInCircle(testpos, rangeRadius, nextpos))
-				endpos = nextpos;
+            if (isPointInCircle(testpos, rangeRadius, segment.EndPos))
+                endIntersection = segment.EndPos;
 			else
 			{
-				RaycastHit2D hit = Physics2D.Raycast(originnodepos, (originnodepos - nextpos).normalized, 
-				                                     Vector2.Distance(originnodepos, nextpos), 1 << LayerMask.NameToLayer("PositioningAIRange"));
+                RaycastHit2D hit = Physics2D.Raycast(segment.EndPos, (segment.StartPos - segment.EndPos).normalized,
+                                                     Vector2.Distance(segment.StartPos, segment.EndPos), 1 << rangelayer);
 				if (hit.collider != null)
-					endpos = hit.point;
+                    endIntersection = hit.point;
 				else
 					continue;
 			}
 
-			dist += Vector2.Distance(startpos, endpos);
-
-			//if (dist > 0)
-			//	Debug.Log("(" + testpos + "): " + nodeGO.name + " to " + nextGO.name + ". DIST: " + dist);
+            potentialtower.SegmentDistances.Add(segment, Vector2.Distance(startIntersection, endIntersection));
 		}
 
-		return dist;
+        potentialtower.ComputeTotal();
 	}   
 
 	private bool isPointInCircle(Vector2 center, float radius, Vector2 tocheck)
@@ -198,4 +221,50 @@ public class AIPlacement : MonoBehaviour
 		return tocheck.x >= center.x - radius && tocheck.x <= center.x + radius && 
 			tocheck.y >= center.y - radius && tocheck.y <= center.y + radius;
 	} 
+}
+
+public enum AIPLACEMENTERRORS
+{
+    PathOutsideRange = -1,
+    NodeTouchingTower = -2,
+    TowerInPath = -3,
+}
+
+public class LineSegment
+{
+	public GameObject StartNodeGO;
+    public GameObject EndNodeGO;
+    public NextNode StartNodeScript;
+    public NextNode EndNodeScript;
+    public Vector2 StartPos;
+    public Vector2 EndPos;
+
+    public LineSegment(GameObject start, GameObject end)
+    {
+        StartNodeGO = start;
+        EndNodeGO = end;
+
+        StartNodeScript = start.GetComponent<NextNode>();
+        EndNodeScript = end.GetComponent<NextNode>();
+
+        StartPos = new Vector2(start.transform.position.x, start.transform.position.y);
+        EndPos = new Vector2(end.transform.position.x, end.transform.position.y);
+    }
+
+	public override bool Equals(System.Object obj)
+	{
+		if (obj == null)
+			return false;
+
+		LineSegment comparing = obj as LineSegment;
+		if (comparing == null)
+			return false;
+
+		return (comparing.StartNodeGO == this.StartNodeGO && comparing.EndNodeGO == this.EndNodeGO);
+	}
+
+    public override int GetHashCode()
+    {
+        return StartNodeGO.GetHashCode() ^ EndNodeGO.GetHashCode();
+    }
 }
