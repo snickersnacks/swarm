@@ -5,6 +5,7 @@ public class AnimTest : MonoBehaviour {
 
 	public float _moveSpeed = 0.025f;
 	public float _rotateSpeed = 6f;
+	public int HealthPoints = 5;
 	float _myLayer = 0f;
 	Transform _me;
 	GameObject NextTarget;
@@ -20,6 +21,10 @@ public class AnimTest : MonoBehaviour {
 	}
 	void Update ()
 	{
+		if (HealthPoints <= 0)
+		{
+			Destroy(this.gameObject);
+		}
 		Vector3 NV = _me.position;
 		Vector3 NP = NextTarget.transform.position + OffSet;
 		NP.z = _myLayer;
@@ -40,7 +45,7 @@ public class AnimTest : MonoBehaviour {
 		else
 		{
 			NextTarget = NextTarget.GetComponent<NextNode>().GetNextTargetObject ();
-			if (NextTarget.name == "NODE_1")
+			if (NextTarget == null)
 			{
 				Destroy(this.gameObject);
 			}

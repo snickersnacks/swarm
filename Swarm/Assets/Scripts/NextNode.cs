@@ -18,8 +18,20 @@ public class NextNode : MonoBehaviour {
 			LookAt();
 	}
 
+	void Update()
+	{
+		if (Input.GetKeyUp(KeyCode.N))
+			this.renderer.enabled = !this.renderer.enabled;
+	}
+
 	private void LookAt()
 	{
+		if (NODES.Count == 0)
+		{
+			this.particleSystem.enableEmission = false;
+			return;
+		}
+
 		Vector3 dir = GetNextTargetObject().transform.position - this.transform.position;
 		float angle = Mathf.Atan2(dir.y,dir.x) * Mathf.Rad2Deg;
 		this.transform.rotation = Quaternion.AngleAxis(angle, Vector3.forward);
@@ -28,18 +40,22 @@ public class NextNode : MonoBehaviour {
 	public void SwitchNextTarget()
 	{
 		NextTarget += 1;
-		if (NextTarget >= NODES.Count) { NextTarget = 0; }
+
+		if (NextTarget >= NODES.Count)
+			NextTarget = 0;
 
 		if (this.particleSystem != null)
 			LookAt();
 	}
 	public GameObject GetNextTargetObject()
 	{
-		return NODES[NextTarget];
+		if (NODES.Count > NextTarget)
+			return NODES[NextTarget];
+		else
+			return null;
 	}
 	void OnMouseUpAsButton()
 	{
-		Debug.Log ("CLICKED");
 		SwitchNextTarget ();
 	}
 }
